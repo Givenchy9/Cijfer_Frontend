@@ -24,32 +24,34 @@ const goToSlide = (index) => {
 
 <template>
     <div
-        class="relative slideshow mx-auto max-w-4xl mt-2 bg-white border border-gray-300 shadow-xs rounded-xl transition-all duration-500 hover:bg-gray-500 hover:p-2">
+        class="relative slide m-auto mx-auto max-w-screen-lg mt-1 bg-white border border-gray-300 shadow-lg rounded-xl transition-all duration-500 hover:bg-gray-500 hover:px-8">
         <!-- Slides -->
-        <div class="relative h-48 overflow-hidden rounded-lg">
-            <div v-for="(slide, index) in slides" :key="slide.id" class="absolute inset-0 transition-all duration-700"
+        <div class="relative h-48 sm:h-64 lg:h-80 overflow-hidden rounded-lg">
+            <div v-for="(slide, index) in slides" :key="slide.id"
+                class="absolute inset-0 transition-opacity duration-700"
                 :class="{ 'opacity-100': slideIndex === index, 'opacity-0': slideIndex !== index }">
                 <img :src="slide.src" alt="Slide" class="w-full h-full object-cover" />
                 <div
-                    class="absolute bottom-4 left-0 right-0 text-center text-white bg-black bg-opacity-50 py-2 text-sm">
+                    class="absolute bottom-12 left-0 right-0 text-center text-white bg-black bg-opacity-50 py-2 text-xs sm:text-sm lg:text-base">
                     {{ slide.caption }}
                 </div>
             </div>
         </div>
 
         <!-- Controls -->
-        <button class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white text-black border-2 p-3 rounded-full"
+        <button
+            class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white text-black border-2 p-2 lg:p-3 rounded-full shadow-lg hover:bg-gray-200"
             @click="prevSlide">
             ❮
         </button>
         <button
-            class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white text-black border-2 p-3 rounded-full"
+            class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white text-black border-2 p-2 lg:p-3 rounded-full shadow-lg hover:bg-gray-200"
             @click="nextSlide">
             ❯
         </button>
 
         <!-- Dots -->
-        <div class="flex justify-center space-x-2 mt-4 p-2">
+        <div class="flex justify-center space-x-2 p-2 -mt-12">
             <span v-for="(slide, index) in slides" :key="slide.id" class="h-3 w-3 rounded-full cursor-pointer" :class="{
                 'bg-gray-800': slideIndex === index,
                 'bg-gray-400': slideIndex !== index
@@ -59,12 +61,13 @@ const goToSlide = (index) => {
 </template>
 
 <style scoped>
-/* Transition effect for fading slides */
+/* Extra fallback for smooth opacity transitions */
 .absolute.inset-0 {
     transition: opacity 0.7s ease-in-out;
 }
 
-.slideshow {
-    width: 760px;
+.slide {
+    width: 1050px;
+    height: 300px;
 }
 </style>

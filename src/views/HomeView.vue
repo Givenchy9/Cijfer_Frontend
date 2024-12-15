@@ -1,5 +1,35 @@
-<script setup lang="ts">
-// import TheWelcome from '../components/TheWelcome.vue'
+<!-- <script setup lang="ts">
+import { ref } from 'vue';
+import axios from 'axios'; // Make sure axios is installed
+
+// Reactive variables for login form
+const email = ref('');
+const password = ref('');
+const errorMessage = ref('');
+
+// Login function
+const login = async () => {
+  try {
+    // Send POST request to the backend for login
+    const response = await axios.post('http://localhost:3000/api/users/login', {
+      email: email.value,
+      password: password.value,
+    });
+
+    if (response.data.success) {
+      // Save token to localStorage (or any other storage you prefer)
+      localStorage.setItem('authToken', response.data.token);
+
+      // Redirect to dashboard or another protected route
+      window.location.href = '/dashboard';
+    } else {
+      errorMessage.value = response.data.message || 'Invalid login credentials';
+    }
+  } catch (error) {
+    console.error(error);
+    errorMessage.value = 'An error occurred. Please try again.';
+  }
+};
 </script>
 
 <template>
@@ -8,6 +38,9 @@
     <div class="flex items-center justify-center min-h-full">
       <form @submit.prevent="login" class="grid grid-cols-2 w-1/2 bg-white bg-opacity-80 p-8 rounded-lg shadow-lg">
         <p class="text-center font-bold text-2xl mb-10 col-span-2">Login</p>
+        <div v-if="errorMessage" class="col-span-2 text-red-500 text-center mb-4">
+          {{ errorMessage }}
+        </div>
         <div class="col-span-2">
           <label class="font-bold">Studenten mail</label>
           <input type="email" v-model="email"
@@ -27,4 +60,7 @@
       </form>
     </div>
   </main>
+</template> -->
+<template>
+
 </template>
