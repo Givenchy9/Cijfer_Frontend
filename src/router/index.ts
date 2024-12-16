@@ -40,8 +40,8 @@ const router = createRouter({
     },
     {
       path: '/vak/:vakId/leerlingen',
-      name: 'StudentsPage',
-      component: () => import('../views/StudentsPage.vue'),
+      name: 'VakLeerlingen',
+      component: () => import('../views/VakLeerlingen.vue'),
     },
     {
       path: '/settings',
