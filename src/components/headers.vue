@@ -1,5 +1,5 @@
 <template>
-    <header class="bg-blue-500">
+    <header class="bg-darkblue">
         <nav class="mx-auto flex max-w-7xl items-center justify-between p-2 lg:px-8" aria-label="Global">
             <div class="flex lg:flex-1">
                 <RouterLink to="/dashboard" class="-m-1.5 p-1.5">

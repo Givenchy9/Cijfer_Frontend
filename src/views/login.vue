@@ -25,40 +25,45 @@ export default {
         };
     },
     methods: {
-        async login() {
-            try {
-                const response = await axios.post("http://localhost:3007/login", {
-                    email: this.email,
-                    password: this.password,
-                });
+    async login() {
+        try {
+            const response = await axios.post("http://localhost:3007/login", {
+                email: this.email,
+                password: this.password,
+            });
 
-                // Log the response for debugging
-                console.log("Login response:", response.data);
+            // Log the response for debugging
+            console.log("Login response:", response.data);
 
-                // Store the token, role, and user's name in localStorage
-                localStorage.setItem("token", response.data.token);
-                localStorage.setItem("role", response.data.role);
-                localStorage.setItem("naam", response.data.naam); // Store user's name
+            // Log the token explicitly
+            console.log("User token:", response.data.token);
 
-                // Redirect the user based on their role
-                if (response.data.role === "docent") {
-                    console.log("Redirecting to docent dashboard...");
-                    this.$router.push("/docent"); // Redirect to docent dashboard
-                } else if (response.data.role === "leerling") {
-                    console.log("Redirecting to leerling dashboard...");
-                    this.$router.push("/dashboard"); // Redirect to student dashboard
-                } else {
-                    throw new Error("Invalid user role");
-                }
-            } catch (error) {
-                console.error("Login error:", error.response?.data?.message || error.message);
-                this.errorMessage = error.response?.data?.message || "An error occurred. Please try again.";
+            // Store the token, role, and user's name in localStorage
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("role", response.data.role);
+            localStorage.setItem("naam", response.data.naam); // Store user's name
+
+            // Redirect the user based on their role
+            if (response.data.role === "docent") {
+                console.log("Redirecting to docent dashboard...");
+                this.$router.push("/docent"); // Redirect to docent dashboard
+            } else if (response.data.role === "leerling") {
+                console.log("Redirecting to leerling dashboard...");
+                this.$router.push("/dashboard"); // Redirect to student dashboard
+            } else if (response.data.role === "beheerder") {
+                console.log("Redirecting to admin dashboard...");
+                this.$router.push("/admin"); // Redirect to admin dashboard
+            } else {
+                throw new Error("Invalid user role");
             }
-        },
+        } catch (error) {
+            console.error("Login error:", error.response?.data?.message || error.message);
+            this.errorMessage = error.response?.data?.message || "An error occurred. Please try again.";
+        }
     },
+},
 };
 </script>
-
 
 <style>
 .error {

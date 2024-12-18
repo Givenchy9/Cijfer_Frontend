@@ -1,5 +1,6 @@
 <template>
     <!-- Card start -->
+     <Header/>
     <div class="max-w-sm mx-auto mt-28 bg-white dark:bg-gray-900 rounded-lg overflow-hidden shadow-lg">
         <div class="border-b px-4 pb-6">
             <div class="text-center my-4">
@@ -36,8 +37,11 @@
 </template>
 
 <script>
-
+import Header from "@/components/header.vue"
 export default {
+    components: {
+        Header,
+    },
     data() {
         return {
             user: { // Default user object, will be updated with actual user data

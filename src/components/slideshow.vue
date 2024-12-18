@@ -1,20 +1,92 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, onBeforeUnmount, computed } from "vue";
+import axios from "axios";
+import { useRouter } from 'vue-router';
 
-const slides = [
-    { id: 1, src: "img_nature_wide.jpg", caption: "Caption Text" },
-    { id: 2, src: "img_snow_wide.jpg", caption: "Caption Two" },
-    { id: 3, src: "img_mountains_wide.jpg", caption: "Caption Three" },
-];
+// State to hold user data and grades
+const userName = ref('');
+const userId = ref(null);
+const cijfers = ref([]);
 
+// Track the current slide index
 const slideIndex = ref(0);
 
+// Fetch grades from the backend
+const fetchGrades = async () => {
+    try {
+        // Get user data from localStorage
+        const storedUserId = localStorage.getItem('userId');
+        const storedUserName = localStorage.getItem('naam');
+        const token = localStorage.getItem('token');
+
+        if (storedUserId && storedUserName && token) {
+            userId.value = parseInt(storedUserId, 10);
+            userName.value = storedUserName;
+            // Fetch grades
+            const response = await axios.get('http://localhost:3007/cijfers/student_view', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            // Populate cijfers with the response data
+            cijfers.value = response.data.map((row) => ({
+                cijfer_id: row.cijfer_id || null,
+                vak_naam: row.vak_naam,
+                cijfer: row.cijfer,
+            }));
+        } else {
+            redirectToLogin();
+        }
+    } catch (error) {
+        console.error("Error fetching grades:", error);
+    }
+};
+
+// Redirect to login if data is missing
+const redirectToLogin = () => {
+    const router = useRouter();
+    router.push('/login'); // Redirect to login page if data is missing
+};
+
+// Compute the average grade
+const averageGrade = computed(() => {
+    if (cijfers.value.length === 0) return 'N/A';
+    const total = cijfers.value.reduce((sum, cijfer) => sum + parseFloat(cijfer.cijfer), 0);
+    const average = total / cijfers.value.length;
+    return average.toFixed(2); // Format to 2 decimal places
+});
+
+// Initialize data when component is mounted
+onMounted(() => {
+    fetchGrades();
+
+    // Set an interval to automatically change slides every 2 seconds
+    const interval = setInterval(() => {
+        slideIndex.value = (slideIndex.value + 1) % slides.value.length;
+    }, 2000); // Change slide every 2 seconds
+
+    // Clear the interval when the component is destroyed
+    onBeforeUnmount(() => {
+        clearInterval(interval);
+    });
+});
+
+// Slides configuration (based on the fetched data)
+const slides = computed(() => {
+    return cijfers.value.map((grade) => ({
+        id: grade.cijfer_id,
+        caption: `${grade.vak_naam} - ${grade.cijfer}`,
+    }));
+});
+
+// Functions to control slide navigation
 const nextSlide = () => {
-    slideIndex.value = (slideIndex.value + 1) % slides.length;
+    slideIndex.value = (slideIndex.value + 1) % slides.value.length;
 };
 
 const prevSlide = () => {
-    slideIndex.value = (slideIndex.value - 1 + slides.length) % slides.length;
+    slideIndex.value = (slideIndex.value - 1 + slides.value.length) % slides.value.length;
 };
 
 const goToSlide = (index) => {
@@ -23,18 +95,13 @@ const goToSlide = (index) => {
 </script>
 
 <template>
-    <div
-        class="relative slide m-auto mx-auto max-w-screen-lg mt-1 bg-white border border-gray-300 shadow-lg rounded-xl transition-all duration-500 hover:bg-gray-500 hover:px-8">
+    <div class="relative slide m-auto mx-auto max-w-screen-lg mt-1 bg-white border border-gray-300 shadow-lg rounded-xl transition-all duration-500 hover:bg-gray-500 hover:px-8">
         <!-- Slides -->
         <div class="relative h-48 sm:h-64 lg:h-80 overflow-hidden rounded-lg">
-            <div v-for="(slide, index) in slides" :key="slide.id"
-                class="absolute inset-0 transition-opacity duration-700"
+            <div v-for="(slide, index) in slides" :key="slide.id" 
+                class="absolute inset-0 transition-opacity duration-700 text-center text-5xl font-bold mt-32" 
                 :class="{ 'opacity-100': slideIndex === index, 'opacity-0': slideIndex !== index }">
-                <img :src="slide.src" alt="Slide" class="w-full h-full object-cover" />
-                <div
-                    class="absolute bottom-12 left-0 right-0 text-center text-white bg-black bg-opacity-50 py-2 text-xs sm:text-sm lg:text-base">
-                    {{ slide.caption }}
-                </div>
+                {{ slide.caption }}
             </div>
         </div>
 

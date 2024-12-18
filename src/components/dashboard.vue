@@ -10,9 +10,23 @@
                             clip-rule="evenodd"></path>
                     </svg>
                 </div>
-                <div>
-                    <h1>Welcome, {{ userName }}</h1> <!-- Display user's name here -->
-                </div>
+                <div class="text-center">
+                    <h1 class="text-xl mt-2">{{ userName }}</h1> <!-- Display user's name here -->
+                    <div class="col-span-2 mt-4">
+                            <div v-if="cijfers.length > 0" class="mt-2">
+                                <div class="hidden">
+                                    <ul>
+                                        <li v-for="cijfer in cijfers" :key="cijfer.cijfer_id" class="border-b py-2">
+                                            Subject: {{ cijfer.vak_naam }} - Grade: {{ cijfer.cijfer }}
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- Display average grade -->
+                                <p class="mt-4 text-5xl font-semibold">{{ averageGrade }}</p>
+                            </div>
+                            <p v-else class="text-gray-500">No grades found.</p>
+                        </div>
+                    </div>
             </div>
         </div>
 
@@ -21,27 +35,17 @@
             <div><i class="fa-solid fa-list-ol fa-2xl"></i></div>
             <div class="text-2xl">Cijfers</div>
         </RouterLink>
-        <RouterLink to="/settings"
+        <RouterLink to="/profile"
             class="grid grid-cols-3 h-36 m-2 rounded-xl items-center justify-between text-center py-2.5 px-6 text-sm border border-gray-300 shadow-xs bg-white font-semibold text-gray-900 transition-all duration-500 hover:bg-gray-500 hover:p-12">
             <div><i class="fa-solid fa-gear fa-2xl"></i></div>
-            <div class="text-2xl">Instellingen</div>
+            <div class="text-2xl">Account</div>
         </RouterLink>
-        <div class="col-span-2 mt-4">
-            <h2 class="text-xl font-bold">Your Grades</h2>
-            <div v-if="cijfers.length > 0" class="mt-2">
-                <ul>
-                    <li v-for="cijfer in cijfers" :key="cijfer.cijfer_id" class="border-b py-2">
-                        Subject: {{ cijfer.vak_naam }} - Grade: {{ cijfer.cijfer }}
-                    </li>
-                </ul>
-            </div>
-            <p v-else class="text-gray-500">No grades found.</p>
-        </div>
     </div>
 </template>
 
 <script lang="ts">
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 export default {
     data() {
@@ -51,37 +55,61 @@ export default {
             cijfers: [], // To store the grades
         };
     },
-    async created() {
-        try {
-            // Retrieve user details from localStorage
-            const storedUserId = localStorage.getItem('userId'); // Assume user ID is stored
-            const storedUserName = localStorage.getItem('naam');
-            if (storedUserId && storedUserName) {
-                this.userId = parseInt(storedUserId, 10);
-                this.userName = storedUserName;
-
-                // Get the JWT token stored in localStorage (you'll need this for auth)
+    created() {
+        this.initializeUserData();
+    },
+    methods: {
+        async initializeUserData() {
+            try {
+                const storedUserId = localStorage.getItem('userId');
+                const storedUserName = localStorage.getItem('naam');
                 const token = localStorage.getItem('token');
-                if (token) {
-                    // Fetch grades for the logged-in user
-                    const response = await axios.get(`http://localhost:3007/cijfers/student_grades`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,  // Send the token for authentication
-                        },
-                        params: {
-                            userId: this.userId, // Pass userId as a query parameter
-                        },
-                    });
-                    this.cijfers = response.data; // Populate the grades array
+
+                if (storedUserId && storedUserName && token) {
+                    this.userId = parseInt(storedUserId, 10);
+                    this.userName = storedUserName;
+                    await this.fetchGrades(token); // Fetch grades once user data is initialized
                 } else {
-                    console.log('No token found in localStorage');
+                    console.log('User data not found. Redirecting to login.');
+                    this.redirectToLogin(); // Handle redirection to login page
                 }
-            } else {
-                console.log('No user data found in localStorage');
+            } catch (error) {
+                console.error('Error initializing user data:', error);
             }
-        } catch (error) {
-            console.error('Error fetching grades:', error);
-        }
+        },
+        async fetchGrades(token: string) {
+            try {
+                const response = await axios.get(
+                    `http://localhost:3007/cijfers/student_view`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`, // Include token in request
+                        },
+                    }
+                );
+
+                this.cijfers = response.data.map((row: any) => ({
+                    cijfer_id: row.cijfer_id || null,
+                    vak_naam: row.vak_naam,
+                    cijfer: row.cijfer,
+                }));
+            } catch (error) {
+                console.error('Error fetching grades:', error);
+            }
+        },
+        redirectToLogin() {
+            const router = useRouter();
+            router.push('/login'); // Redirect to login page if data is missing
+        },
+    },
+    computed: {
+        // Compute the average grade
+        averageGrade(): string {
+            if (this.cijfers.length === 0) return 'N/A';
+            const total = this.cijfers.reduce((sum, cijfer) => sum + cijfer.cijfer, 0);
+            const average = total / this.cijfers.length;
+            return average.toFixed(2); // Format to 2 decimal places
+        },
     },
 };
 </script>
