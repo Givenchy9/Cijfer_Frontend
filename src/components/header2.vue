@@ -17,19 +17,10 @@
                 </button>
             </div>
             <PopoverGroup class="hidden lg:flex lg:gap-x-2">
-
-                <RouterLink to="/dashboard" active-class="bg-gray-400"
-                    class="text-sm/6 font-semibold text-gray-900 bg-blue-500 border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-1 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-1 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
-                    Settings</RouterLink>
                 <!-- <RouterLink to="cijfers"
                     class="text-sm/6 font-semibold text-gray-900 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-1 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
                     Cijfers</RouterLink> -->
                 <Popover class="relative">
-                    <PopoverButton
-                        class="text-sm/6 flex font-semibold text-gray-900 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-1 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-1 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
-                        Specifiek Cijfer
-                        <ChevronDownIcon class="size-5 flex-none text-gray-400" aria-hidden="true" />
-                    </PopoverButton>
 
                     <transition enter-active-class="transition ease-out duration-200"
                         enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0"

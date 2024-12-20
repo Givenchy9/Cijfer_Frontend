@@ -25,28 +25,26 @@
                 <p><strong>Class:</strong> {{ selectedStudent.klas_naam }}</p>
 
                 <!-- Show Grades -->
-                <h3 class="text-lg font-semibold mt-4">Grades for {{ vakName }}</h3>
-                <div v-if="grades.length" class="mt-2">
-                    <ul>
-                        <li v-for="(grade, index) in grades" :key="index">
-                            <strong>Grade:</strong> {{ grade.cijfer }}
-                            <span v-if="grade.commentaar">(<em>{{ grade.commentaar }}</em>)</span>
-                        </li>
-                    </ul>
-                </div>
-                <div v-else>
-                    <p>No grades available for this student.</p>
-                </div>
-                <div v-if="grades.length" class="mt-2">
-  <ul>
-    <li v-for="(grade, index) in grades" :key="index">
-      <strong>Grade:</strong> {{ grade.cijfer }}
-      <span v-if="grade.commentaar">(<em>{{ grade.commentaar }}</em>)</span>
-      <button @click="deleteGrade(grade.id)" class="ml-4 text-red-500">Delete</button>
-    </li>
-  </ul>
+<h3 class="text-lg font-semibold mt-4">Grades for {{ vakName }}</h3>
+<div v-if="grades.length" class="mt-2">
+    <ul>
+        <li v-for="(grade, index) in grades" :key="index" class="flex items-center justify-between">
+            <div>
+                <strong>Grade:</strong> {{ grade.cijfer }}
+                <span v-if="grade.commentaar">(<em>{{ grade.commentaar }}</em>)</span>
+            </div>
+            <button
+                @click="deleteGrade(grade.cijfer_id)"
+                class="text-red-500 hover:underline"
+            >
+                Delete
+            </button>
+        </li>
+    </ul>
 </div>
-
+<div v-else>
+    <p>No grades available for this student.</p>
+</div>
 
                 <!-- Add Grade Form -->
                 <h3 class="text-lg font-semibold mt-4">Add Grade</h3>
@@ -212,32 +210,31 @@ const submitGrade = async () => {
         }
     }
 };
-
+// Function to delete a grade
 const deleteGrade = async (gradeId) => {
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.error("No token found. User might not be authenticated.");
-      return;
+    if (!confirm("Are you sure you want to delete this grade?")) return;
+
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("No token found. User might not be authenticated.");
+            return;
+        }
+
+        await axios.delete(`http://localhost:3007/cijfers/${gradeId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        alert("Grade deleted successfully.");
+        // Refresh grades list
+        fetchGrades(selectedStudent.value.leerling_id);
+    } catch (error) {
+        console.error("Error deleting grade:", error);
+        alert("Failed to delete grade.");
     }
-
-    const response = await axios.delete(
-      `http://localhost:3007/cijfers/${gradeId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    alert(response.data.message); // Show success message
-    fetchGrades(selectedStudent.value.leerling_id); // Refresh the grades
-  } catch (error) {
-    console.error("Error deleting grade:", error);
-    alert("Failed to delete grade.");
-  }
 };
-
 
 // Function to close the modal
 const closeModal = () => {

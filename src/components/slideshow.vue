@@ -1,20 +1,17 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import axios from "axios";
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 
-// State to hold user data and grades
 const userName = ref('');
 const userId = ref(null);
 const cijfers = ref([]);
 
-// Track the current slide index
 const slideIndex = ref(0);
 
-// Fetch grades from the backend
+// Fetch grades and include teacher's name
 const fetchGrades = async () => {
     try {
-        // Get user data from localStorage
         const storedUserId = localStorage.getItem('userId');
         const storedUserName = localStorage.getItem('naam');
         const token = localStorage.getItem('token');
@@ -22,18 +19,18 @@ const fetchGrades = async () => {
         if (storedUserId && storedUserName && token) {
             userId.value = parseInt(storedUserId, 10);
             userName.value = storedUserName;
-            // Fetch grades
+
             const response = await axios.get('http://localhost:3007/cijfers/student_view', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
 
-            // Populate cijfers with the response data
             cijfers.value = response.data.map((row) => ({
                 cijfer_id: row.cijfer_id || null,
                 vak_naam: row.vak_naam,
                 cijfer: row.cijfer,
+                docent_naam: row.docent_naam, // Include teacher's name
             }));
         } else {
             redirectToLogin();
@@ -43,44 +40,36 @@ const fetchGrades = async () => {
     }
 };
 
-// Redirect to login if data is missing
 const redirectToLogin = () => {
     const router = useRouter();
-    router.push('/login'); // Redirect to login page if data is missing
+    router.push('/login');
 };
 
-// Compute the average grade
 const averageGrade = computed(() => {
     if (cijfers.value.length === 0) return 'N/A';
     const total = cijfers.value.reduce((sum, cijfer) => sum + parseFloat(cijfer.cijfer), 0);
-    const average = total / cijfers.value.length;
-    return average.toFixed(2); // Format to 2 decimal places
+    return (total / cijfers.value.length).toFixed(2);
 });
 
-// Initialize data when component is mounted
 onMounted(() => {
     fetchGrades();
 
-    // Set an interval to automatically change slides every 2 seconds
     const interval = setInterval(() => {
         slideIndex.value = (slideIndex.value + 1) % slides.value.length;
-    }, 2000); // Change slide every 2 seconds
+    }, 2000);
 
-    // Clear the interval when the component is destroyed
     onBeforeUnmount(() => {
         clearInterval(interval);
     });
 });
 
-// Slides configuration (based on the fetched data)
 const slides = computed(() => {
     return cijfers.value.map((grade) => ({
         id: grade.cijfer_id,
-        caption: `${grade.vak_naam} - ${grade.cijfer}`,
+        caption: `${grade.vak_naam} - ${grade.cijfer} (${grade.docent_naam})`, // Include teacher's name in the caption
     }));
 });
 
-// Functions to control slide navigation
 const nextSlide = () => {
     slideIndex.value = (slideIndex.value + 1) % slides.value.length;
 };
@@ -128,7 +117,6 @@ const goToSlide = (index) => {
 </template>
 
 <style scoped>
-/* Extra fallback for smooth opacity transitions */
 .absolute.inset-0 {
     transition: opacity 0.7s ease-in-out;
 }

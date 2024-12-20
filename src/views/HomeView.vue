@@ -1,4 +1,4 @@
-<!-- <script setup lang="ts">
+<script setup lang="ts">
 import { ref } from 'vue';
 import axios from 'axios'; // Make sure axios is installed
 
@@ -60,7 +60,4 @@ const login = async () => {
       </form>
     </div>
   </main>
-</template> -->
-<template>
-
 </template>

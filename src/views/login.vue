@@ -1,16 +1,19 @@
 <template>
-    <div class="m-auto w-1/2 bg-red-500 mt-56">
-        <h1 class="text-center text-xl">Login</h1>
-        <form @submit.prevent="login" class="grid grid-rows-2 w-1/2 m-auto mt-10">
-            <label for="email">Email</label>
-            <input type="email" v-model="email" id="email" required />
-            <label for="password">Password</label>
-            <input type="password" v-model="password" id="password" required />
-            <button type="submit"
-                class="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Login</button>
-        </form>
-        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-    </div>
+    <main
+    style="background-image: url('/src/components/img/veenhoop_10_12_07_impres.jpg'); background-size: cover; background-position: center; min-height: 100vh;">
+        <div class="m-auto w-1/2 bg-red-500 pt-56 bg-white bg-opacity-80 p-8 rounded-lg shadow-lg">
+            <h1 class="text-center text-2xl font-bold">Login</h1>
+            <form @submit.prevent="login" class="grid grid-rows-2 w-1/2 m-auto mt-10">
+                <label for="email" class="font-bold">Email</label>
+                <input type="email" v-model="email" id="email" required />
+                <label for="password" class="font-bold">Password</label>
+                <input type="password" v-model="password" id="password" required />
+                <button type="submit"
+                    class="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Login</button>
+            </form>
+            <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+        </div>
+    </main>
 </template>
 
 <script>

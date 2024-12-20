@@ -1,5 +1,5 @@
 <template>
-    <Header/>
+    <Headers/>
     <div class="grid grid-cols-3 h-screen mt-8">
         <!-- Left Sidebar with Filters -->
         <div class="col-span-1 p-4">
@@ -71,7 +71,9 @@
                     </tbody>
                 </table>
                 <!-- Display average grade -->
-                <p class="mt-4 text-lg font-semibold">Average Grade: {{ averageGrade }}</p>
+                 <div class="text-center mt-20">
+                    <p class="mt-4 text-3xl font-semibold">Average Grade: {{ averageGrade }}</p>
+                 </div>
             </div>
             <p v-else class="text-gray-500">No grades found.</p>
         </div>
@@ -79,13 +81,13 @@
 </template>
 
 <script lang="ts">
-import Header from '@/components/header.vue';
+import Headers from '@/components/headers.vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
 export default {
     components: {
-        Header,
+        Headers,
     },
     data() {
         return {

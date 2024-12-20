@@ -1,7 +1,8 @@
 <template>
     <Header2 />
     <main class="mx-20 my-8">
-        <div class="grid grid-cols-2 bg-red-500">
+        <p class="text-center text-3xl font-bold mb-4">Vakken</p>
+        <div class="grid grid-cols-2">
             <!-- Render each subject dynamically -->
             <RouterLink v-for="(vak, index) in vakken" :key="index" :to="vak.link"
                 class="grid grid-cols-3 h-72 m-2 rounded-xl items-center justify-between text-center py-2.5 px-6 text-sm border border-gray-300 shadow-xs bg-white font-semibold text-gray-900 transition-all duration-500 hover:bg-gray-500 hover:p-32 hover:rounded">
